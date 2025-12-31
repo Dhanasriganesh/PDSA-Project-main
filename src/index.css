@@ -94,3 +94,71 @@ html {
   bottom: 0;
   transform: scaleY(-1);
 }
+
+/* Marquee Animations */
+@keyframes marquee-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes marquee-right {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.animate-marquee-left {
+  animation: marquee-left 15s linear infinite;
+  will-change: transform;
+}
+
+.animate-marquee-right {
+  animation: marquee-right 25s linear infinite;
+  will-change: transform;
+}
+
+.animate-marquee-left-slow {
+  animation: marquee-left 35s linear infinite;
+  will-change: transform;
+}
+
+/* Client Card Hover Effects */
+.client-card {
+  position: relative;
+  overflow: visible;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.client-card:hover {
+  transform: translateY(-5px);
+}
+
+.client-logo-container {
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.client-card:hover .client-logo-container {
+  transform: scale(1.1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.client-card:hover .client-logo-img {
+  filter: brightness(1.05);
+}
+
+.client-name {
+  transition: all 0.3s ease;
+}
+
+.client-card:hover .client-name {
+  transform: translateY(-2px);
+}

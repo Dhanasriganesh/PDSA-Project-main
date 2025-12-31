@@ -24,17 +24,18 @@ function Career() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0">
-          <img 
-            src={careerBgImage} 
-            alt="Career Background" 
-            className="w-full h-full object-cover"
-          />
-        </div>
+      <section 
+        className="relative min-h-screen flex items-center justify-center overflow-hidden text-white"
+        style={{
+          backgroundImage: `url(${careerBgImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed'
+        }}
+      >
         <div className="absolute inset-0 bg-black/30"></div>
         <div className="relative z-10 container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center text-white">
+          <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-5xl md:text-6xl font-bold mb-6 animate-fade-in-up">Build Your Career</h1>
             <p className="text-xl text-gray-200 animate-fade-in-up-delay">
               Transform your skills, accelerate your growth, and unlock your potential with PDSA Technologies

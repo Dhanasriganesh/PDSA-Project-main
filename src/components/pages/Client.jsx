@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import clientNetworkBg from '../../assets/client-network-bg.jpg';
 
 // Import all client logos
@@ -125,16 +125,30 @@ function Client() {
     { name: 'Wipro', logo: wiproLogo },
   ];
 
+  // Shuffle function
+  const shuffleArray = (array) => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
+  // Create three different shuffled arrays for the three rows (memoized to prevent re-shuffling on re-renders)
+  const row1Clients = useMemo(() => shuffleArray(clients), []);
+  const row2Clients = useMemo(() => shuffleArray(clients), []);
+  const row3Clients = useMemo(() => shuffleArray(clients), []);
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 text-white py-20 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `radial-gradient(circle at 2px 2px, #60a5fa 1px, transparent 0)`,
-            backgroundSize: '60px 60px'
-          }}></div>
-        </div>
+      <section className="min-h-screen text-white relative overflow-hidden flex items-center justify-center" style={{
+        backgroundImage: `url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed'
+      }}>
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-5xl md:text-6xl font-bold mb-6 animate-fade-in-up">Our Clients</h1>
@@ -145,24 +159,65 @@ function Client() {
         </div>
       </section>
 
-      {/* Clients Grid */}
-      <section className="py-20">
+      {/* Clients Marquee */}
+      <section className="py-20 overflow-hidden">
         <div className="container mx-auto px-4">
           <p className="text-xl text-gray-600 mb-12 text-center">
             We're proud to work with {clients.length}+ industry-leading companies across various sectors
           </p>
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
-            {clients.map((client, index) => (
-              <div
-                key={index}
-                className="group bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 p-6 flex flex-col items-center justify-center text-center border border-gray-100 hover:border-blue-200"
-              >
-                <div className="w-20 h-20 bg-gray-50 rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300 p-2">
-                  <img src={client.logo} alt={client.name} className="max-w-full max-h-full object-contain" />
+          
+          {/* Row 1 - Moving Left */}
+          <div className="relative mb-6 overflow-hidden">
+            <div className="flex animate-marquee-left">
+              {/* Duplicate clients multiple times for seamless loop and to ensure all are visible */}
+              {[...row1Clients, ...row1Clients, ...row1Clients, ...row1Clients].map((client, index) => (
+                <div
+                  key={`row1-${index}`}
+                  className="group client-card flex-shrink-0 mx-4 transition-all duration-300 p-4 flex flex-col items-center justify-center text-center w-40"
+                >
+                  <div className="client-logo-container w-28 h-28 bg-gray-50 rounded-lg flex items-center justify-center mb-3 group-hover:bg-blue-50 transition-all duration-300 p-3">
+                    <img src={client.logo} alt={client.name} className="client-logo-img max-w-full max-h-full object-contain transition-all duration-300" />
+                  </div>
+                  <h3 className="client-name text-sm font-medium text-gray-700 group-hover:text-blue-600 transition-all duration-300 leading-tight">{client.name}</h3>
                 </div>
-                <h3 className="text-sm font-semibold text-gray-800 group-hover:text-blue-600 transition-colors duration-300">{client.name}</h3>
-              </div>
-            ))}
+              ))}
+            </div>
+          </div>
+
+          {/* Row 2 - Moving Right */}
+          <div className="relative mb-6 overflow-hidden">
+            <div className="flex animate-marquee-right">
+              {/* Duplicate clients multiple times for seamless loop and to ensure all are visible */}
+              {[...row2Clients, ...row2Clients, ...row2Clients, ...row2Clients].map((client, index) => (
+                <div
+                  key={`row2-${index}`}
+                  className="group client-card flex-shrink-0 mx-4 transition-all duration-300 p-4 flex flex-col items-center justify-center text-center w-40"
+                >
+                  <div className="client-logo-container w-28 h-28 bg-gray-50 rounded-lg flex items-center justify-center mb-3 group-hover:bg-green-50 transition-all duration-300 p-3">
+                    <img src={client.logo} alt={client.name} className="client-logo-img max-w-full max-h-full object-contain transition-all duration-300" />
+                  </div>
+                  <h3 className="client-name text-sm font-medium text-gray-700 group-hover:text-green-600 transition-all duration-300 leading-tight">{client.name}</h3>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Row 3 - Moving Left (Slower) */}
+          <div className="relative overflow-hidden">
+            <div className="flex animate-marquee-left-slow">
+              {/* Duplicate clients multiple times for seamless loop and to ensure all are visible */}
+              {[...row3Clients, ...row3Clients, ...row3Clients, ...row3Clients].map((client, index) => (
+                <div
+                  key={`row3-${index}`}
+                  className="group client-card flex-shrink-0 mx-4 transition-all duration-300 p-4 flex flex-col items-center justify-center text-center w-40"
+                >
+                  <div className="client-logo-container w-28 h-28 bg-gray-50 rounded-lg flex items-center justify-center mb-3 group-hover:bg-purple-50 transition-all duration-300 p-3">
+                    <img src={client.logo} alt={client.name} className="client-logo-img max-w-full max-h-full object-contain transition-all duration-300" />
+                  </div>
+                  <h3 className="client-name text-sm font-medium text-gray-700 group-hover:text-purple-600 transition-all duration-300 leading-tight">{client.name}</h3>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -208,4 +263,3 @@ function Client() {
 }
 
 export default Client;
-

@@ -69,14 +69,15 @@ function Contact() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="relative h-[70vh] min-h-[500px] flex items-center justify-center text-white overflow-hidden">
-        <div className="absolute inset-0">
-          <img 
-            src={contactBanner} 
-            alt="Contact Us" 
-            className="w-full h-full object-cover"
-          />
-        </div>
+      <section 
+        className="relative min-h-screen flex items-center justify-center text-white overflow-hidden"
+        style={{
+          backgroundImage: `url(${contactBanner})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed'
+        }}
+      >
         <div className="relative z-10 container mx-auto px-4 text-center">
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6" style={{textShadow: '2px 2px 8px rgba(0,0,0,0.8)'}}>
             Contact Us

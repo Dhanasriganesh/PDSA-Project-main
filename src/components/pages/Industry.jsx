@@ -5,19 +5,22 @@ function Industry() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="text-white py-20 relative overflow-hidden" style={{
-        backgroundImage: 'url(https://images.unsplash.com/photo-1518770660439-4636190af475?w=1920&q=80)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
-      }}>
+      <section 
+        className="min-h-screen text-white relative overflow-hidden flex items-center justify-center" 
+        style={{
+          backgroundImage: 'url(https://images.unsplash.com/photo-1518770660439-4636190af475?w=1920&q=80)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed'
+        }}
+      >
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0" style={{
             backgroundImage: `radial-gradient(circle at 2px 2px, #60a5fa 1px, transparent 0)`,
             backgroundSize: '60px 60px'
           }}></div>
         </div>
-        <div className="container mx-auto px-6 lg:px-8">
+        <div className="container mx-auto px-6 lg:px-8 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-5xl md:text-6xl font-bold mb-6 animate-fade-in-up">Industries We Serve</h1>
             <p className="text-xl text-gray-200 leading-relaxed animate-fade-in-up-delay">
