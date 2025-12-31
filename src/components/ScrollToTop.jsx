@@ -1,7 +1,14 @@
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 
 export default function ScrollToTop() {
   const [visible, setVisible] = useState(false);
+  const location = useLocation();
+
+  // Scroll to top on route change
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   useEffect(() => {
     const onScroll = () => {

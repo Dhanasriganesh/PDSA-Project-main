@@ -200,3 +200,5 @@ function IndustryDetail() {
 export default IndustryDetail;
 
 
+
+

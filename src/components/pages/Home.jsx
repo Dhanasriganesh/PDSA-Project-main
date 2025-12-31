@@ -1,14 +1,12 @@
 import React from 'react';
-import HeroSection from './home/HeroSection';
-import ClientsSection from './home/ClientsSection';
-import AboutSection from './home/AboutSection';
-import IndustryExperienceSection from './home/IndustryExperienceSection';
-import HowWeWorkSection from './home/HowWeWorkSection';
-import WhyChooseUsSection from './home/WhyChooseUsSection';
-import StatsCounterSection from './home/StatsCounterSection';
-import CTASection from './home/CTASection';
-import TestimonialsSection from './home/TestimonialsSection';
-import LocationsSection from './home/LocationsSection';
+import HeroSection from '../sections/HeroSection';
+import ClientsSection from '../sections/ClientsSection';
+import AboutSection from '../sections/AboutSection';
+import ServicesSection from '../sections/ServicesSection';
+import IndustryExperienceSection from '../sections/IndustryExperienceSection';
+import WhyChooseUsSection from '../sections/WhyChooseUsSection';
+import CTASection from '../sections/CTASection';
+import TestimonialsSection from '../sections/TestimonialsSection';
 
 function Home() {
   return (
@@ -17,12 +15,10 @@ function Home() {
       <ClientsSection />
       <AboutSection />
       <IndustryExperienceSection />
-      <HowWeWorkSection />
+      <ServicesSection />
       <WhyChooseUsSection />
-      <StatsCounterSection />
       <CTASection />
       <TestimonialsSection />
-      <LocationsSection />
     </div>
   );
 }
