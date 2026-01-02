@@ -3,18 +3,21 @@ import contactBanner from '../../assets/contact/contactbanner.jpg';
 import inTouchImage from '../../assets/contact/in touch.png';
 import usaImage from '../../assets/contact/usa.png';
 import indiaImage from '../../assets/contact/india.png';
+import { getApiBaseUrl } from '../../utils/api';
 
 function Contact() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    phone: '',
+    mobile: '',
     company: '',
-    subject: '',
+    topic: '',
     message: '',
   });
+  const [file, setFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleChange = (e) => {
     setFormData({
@@ -23,43 +26,111 @@ function Contact() {
     });
   };
 
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      // Validate file type
+      const allowedTypes = ['.pdf', '.doc', '.docx', '.zip', '.ppt', '.pptx'];
+      const fileExtension = '.' + selectedFile.name.split('.').pop().toLowerCase();
+      
+      if (!allowedTypes.includes(fileExtension)) {
+        setErrorMessage('Invalid file type. Allowed types: PDF, DOC, DOCX, ZIP, PPT, PPTX');
+        setFile(null);
+        e.target.value = '';
+        return;
+      }
+      
+      // Validate file size (max 10MB)
+      if (selectedFile.size > 10 * 1024 * 1024) {
+        setErrorMessage('File size must be less than 10MB');
+        setFile(null);
+        e.target.value = '';
+        return;
+      }
+      
+      setFile(selectedFile);
+      setErrorMessage('');
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     setSubmitStatus(null);
+    setErrorMessage('');
 
     try {
-      const response = await fetch('http://localhost:5000/api/contact', {
+      // Create FormData
+      const payload = new FormData();
+      payload.append('name', formData.name);
+      payload.append('email', formData.email);
+      payload.append('mobile', formData.mobile);
+      payload.append('company', formData.company || '');
+      payload.append('topic', formData.topic);
+      payload.append('message', formData.message || '');
+      if (file) {
+        payload.append('file', file);
+      }
+
+      const response = await fetch(`${getApiBaseUrl()}/contact`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+        body: payload, // Don't set Content-Type header - browser sets it automatically with boundary
       });
 
-      const data = await response.json();
+      // Check if response is ok and has content
+      if (!response.ok) {
+        // Try to parse error response
+        let errorData;
+        try {
+          const text = await response.text();
+          errorData = text ? JSON.parse(text) : { error: `Server error: ${response.status}` };
+        } catch (e) {
+          errorData = { error: `Server error: ${response.status} ${response.statusText}` };
+        }
+        setSubmitStatus('error');
+        setErrorMessage(errorData.error || `Failed to send message. Server returned ${response.status}`);
+        return;
+      }
 
-      if (response.ok) {
+      // Parse successful response
+      let data;
+      try {
+        const text = await response.text();
+        data = text ? JSON.parse(text) : { success: false, error: 'Empty response from server' };
+      } catch (e) {
+        setSubmitStatus('error');
+        setErrorMessage('Invalid response from server. Please try again.');
+        return;
+      }
+
+      if (data.success) {
         setSubmitStatus('success');
         setFormData({
           name: '',
           email: '',
-          phone: '',
+          mobile: '',
           company: '',
-          subject: '',
+          topic: '',
           message: '',
         });
+        setFile(null);
+        // Reset file input
+        const fileInput = document.getElementById('file');
+        if (fileInput) fileInput.value = '';
       } else {
         setSubmitStatus('error');
+        setErrorMessage(data.error || 'Failed to send message. Please try again.');
       }
     } catch (error) {
       console.error('Error submitting form:', error);
-      // If backend is not running, show a helpful message
-      if (error.message.includes('Failed to fetch')) {
-        setSubmitStatus('error');
-        alert('Unable to connect to server. Please make sure the backend server is running on http://localhost:5000');
+      setSubmitStatus('error');
+      if (error.message.includes('Failed to fetch') || 
+          error.message.includes('NetworkError') || 
+          error.message.includes('ERR_CONNECTION_REFUSED') ||
+          error.name === 'TypeError') {
+        setErrorMessage('Unable to connect to server. Please try again later or contact support if the issue persists.');
       } else {
-        setSubmitStatus('error');
+        setErrorMessage('Failed to send message. Please try again later.');
       }
     } finally {
       setIsSubmitting(false);
@@ -115,7 +186,16 @@ function Contact() {
                   <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  There was an error sending your message. Please try again.
+                  {errorMessage || 'There was an error sending your message. Please try again.'}
+                </div>
+              )}
+
+              {errorMessage && submitStatus !== 'error' && (
+                <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-lg flex items-center text-sm">
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                  {errorMessage}
                 </div>
               )}
 
@@ -156,14 +236,15 @@ function Contact() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div>
-                    <label htmlFor="phone" className="block text-gray-700 font-semibold mb-1 text-xs">
-                      Phone
+                    <label htmlFor="mobile" className="block text-gray-700 font-semibold mb-1 text-xs">
+                      Mobile <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="tel"
-                      id="phone"
-                      name="phone"
-                      value={formData.phone}
+                      id="mobile"
+                      name="mobile"
+                      required
+                      value={formData.mobile}
                       onChange={handleChange}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-all bg-gray-50 focus:bg-white text-sm"
                       placeholder="+1 (555) 123-4567"
@@ -187,35 +268,54 @@ function Contact() {
                 </div>
 
                 <div>
-                  <label htmlFor="subject" className="block text-gray-700 font-semibold mb-1 text-xs">
-                    Subject <span className="text-red-500">*</span>
+                  <label htmlFor="topic" className="block text-gray-700 font-semibold mb-1 text-xs">
+                    Topic <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    type="text"
-                    id="subject"
-                    name="subject"
+                  <select
+                    id="topic"
+                    name="topic"
                     required
-                    value={formData.subject}
+                    value={formData.topic}
                     onChange={handleChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-all bg-gray-50 focus:bg-white text-sm"
-                    placeholder="How can we help you?"
-                  />
+                  >
+                    <option value="">Select a topic</option>
+                    <option value="strategy">Strategy / innovation</option>
+                    <option value="platforms">Platforms / engineering</option>
+                    <option value="ai">AI & automation</option>
+                    <option value="careers">Careers</option>
+                    <option value="media">Media / partnerships</option>
+                  </select>
                 </div>
 
                 <div>
                   <label htmlFor="message" className="block text-gray-700 font-semibold mb-1 text-xs">
-                    Message <span className="text-red-500">*</span>
+                    Message
                   </label>
                   <textarea
                     id="message"
                     name="message"
-                    required
                     rows="3"
                     value={formData.message}
                     onChange={handleChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-all bg-gray-50 focus:bg-white resize-none text-sm"
                     placeholder="Tell us about your project or inquiry..."
                   />
+                </div>
+
+                <div>
+                  <label htmlFor="file" className="block text-gray-700 font-semibold mb-1 text-xs">
+                    Attach File (Optional)
+                  </label>
+                  <input
+                    type="file"
+                    id="file"
+                    name="file"
+                    onChange={handleFileChange}
+                    accept=".pdf,.doc,.docx,.zip,.ppt,.pptx"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-all bg-gray-50 focus:bg-white text-sm file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Accepted: PDF, DOC, DOCX, ZIP, PPT, PPTX (Max 10MB)</p>
                 </div>
 
                 <button

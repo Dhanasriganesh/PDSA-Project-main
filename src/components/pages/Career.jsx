@@ -1,24 +1,132 @@
 import React, { useState } from 'react';
 import careerBgImage from '../../assets/careers/careers-bg.png';
 import careerImage from '../../assets/careers/careers.png';
+import { getApiBaseUrl } from '../../utils/api';
 
 function Career() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    phone: '',
-    experience: 'fresher',
-    domain: '',
-    motto: ''
+    mobile: '',
+    role: '',
+    message: ''
   });
+  const [file, setFile] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      // Validate file type
+      const allowedTypes = ['.pdf', '.doc', '.docx', '.zip'];
+      const fileExtension = '.' + selectedFile.name.split('.').pop().toLowerCase();
+      
+      if (!allowedTypes.includes(fileExtension)) {
+        setErrorMessage('Invalid file type. Allowed types: PDF, DOC, DOCX, ZIP');
+        setFile(null);
+        e.target.value = '';
+        return;
+      }
+      
+      // Validate file size (max 10MB)
+      if (selectedFile.size > 10 * 1024 * 1024) {
+        setErrorMessage('File size must be less than 10MB');
+        setFile(null);
+        e.target.value = '';
+        return;
+      }
+      
+      setFile(selectedFile);
+      setErrorMessage('');
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
+    setIsSubmitting(true);
+    setSubmitStatus(null);
+    setErrorMessage('');
+
+    try {
+      // Create FormData
+      const payload = new FormData();
+      payload.append('name', formData.name);
+      payload.append('email', formData.email);
+      payload.append('mobile', formData.mobile);
+      payload.append('role', formData.role);
+      payload.append('message', formData.message || '');
+      if (file) {
+        payload.append('file', file);
+      }
+
+      const response = await fetch(`${getApiBaseUrl()}/careers/apply`, {
+        method: 'POST',
+        body: payload, // Don't set Content-Type header - browser sets it automatically with boundary
+      });
+
+      // Check if response is ok and has content
+      if (!response.ok) {
+        // Try to parse error response
+        let errorData;
+        try {
+          const text = await response.text();
+          errorData = text ? JSON.parse(text) : { error: `Server error: ${response.status}` };
+        } catch (e) {
+          errorData = { error: `Server error: ${response.status} ${response.statusText}` };
+        }
+        setSubmitStatus('error');
+        setErrorMessage(errorData.error || `Failed to submit application. Server returned ${response.status}`);
+        return;
+      }
+
+      // Parse successful response
+      let data;
+      try {
+        const text = await response.text();
+        data = text ? JSON.parse(text) : { success: false, error: 'Empty response from server' };
+      } catch (e) {
+        setSubmitStatus('error');
+        setErrorMessage('Invalid response from server. Please try again.');
+        return;
+      }
+
+      if (data.success) {
+        setSubmitStatus('success');
+        setFormData({
+          name: '',
+          email: '',
+          mobile: '',
+          role: '',
+          message: ''
+        });
+        setFile(null);
+        // Reset file input
+        const fileInput = document.getElementById('resume-file');
+        if (fileInput) fileInput.value = '';
+      } else {
+        setSubmitStatus('error');
+        setErrorMessage(data.error || 'Failed to submit application. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      setSubmitStatus('error');
+      if (error.message.includes('Failed to fetch') || 
+          error.message.includes('NetworkError') || 
+          error.message.includes('ERR_CONNECTION_REFUSED') ||
+          error.name === 'TypeError') {
+        setErrorMessage('Unable to connect to server. Please try again later or contact support if the issue persists.');
+      } else {
+        setErrorMessage('Failed to submit application. Please try again later.');
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -63,6 +171,32 @@ function Career() {
               {/* Right Side - Form */}
               <div className="flex flex-col">
                 <form onSubmit={handleSubmit} className="bg-gray-50 rounded-2xl p-8 shadow-lg h-full flex flex-col">
+                  {submitStatus === 'success' && (
+                    <div className="mb-4 p-3 bg-green-50 border border-green-200 text-green-800 rounded-lg flex items-center text-sm">
+                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      Application submitted successfully! We'll get back to you soon.
+                    </div>
+                  )}
+
+                  {submitStatus === 'error' && (
+                    <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-800 rounded-lg flex items-center text-sm">
+                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      {errorMessage || 'There was an error submitting your application. Please try again.'}
+                    </div>
+                  )}
+
+                  {errorMessage && submitStatus !== 'error' && (
+                    <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-lg flex items-center text-sm">
+                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                      </svg>
+                      {errorMessage}
+                    </div>
+                  )}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
                   <label className="block text-gray-700 font-semibold mb-2">Full Name</label>
@@ -87,62 +221,69 @@ function Career() {
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div>
-                  <label className="block text-gray-700 font-semibold mb-2">Phone</label>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700 font-semibold mb-2">Experience Level</label>
-                  <select
-                    name="experience"
-                    value={formData.experience}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  >
-                    <option value="fresher">Fresher</option>
-                    <option value="1-2 years">1-2 Years</option>
-                    <option value="3-5 years">3-5 Years</option>
-                    <option value="5+ years">5+ Years</option>
-                  </select>
-                </div>
+              <div className="mb-6">
+                <label className="block text-gray-700 font-semibold mb-2">Mobile <span className="text-red-500">*</span></label>
+                <input
+                  type="tel"
+                  name="mobile"
+                  value={formData.mobile}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  required
+                  placeholder="+1 (555) 123-4567"
+                />
               </div>
               <div className="mb-6">
-                <label className="block text-gray-700 font-semibold mb-2">Current Interested Domain</label>
+                <label className="block text-gray-700 font-semibold mb-2">Role of Interest <span className="text-red-500">*</span></label>
                 <input
                   type="text"
-                  name="domain"
-                  value={formData.domain}
+                  name="role"
+                  value={formData.role}
                   onChange={handleInputChange}
-                  placeholder="e.g., AI/ML, Cloud Computing, Full Stack Development"
+                  placeholder="e.g., AI/ML Engineer, Cloud Architect, Full Stack Developer"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   required
                 />
               </div>
               <div className="mb-6">
-                <label className="block text-gray-700 font-semibold mb-2">Your Motto (What are you looking for?)</label>
+                <label className="block text-gray-700 font-semibold mb-2">Additional Message</label>
                 <textarea
-                  name="motto"
-                  value={formData.motto}
+                  name="message"
+                  value={formData.message}
                   onChange={handleInputChange}
                   rows="4"
                   placeholder="Tell us about your career goals and what you're looking for..."
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  required
                 ></textarea>
+              </div>
+              <div className="mb-6">
+                <label className="block text-gray-700 font-semibold mb-2">Resume/Portfolio (Optional)</label>
+                <input
+                  type="file"
+                  id="resume-file"
+                  name="file"
+                  onChange={handleFileChange}
+                  accept=".pdf,.doc,.docx,.zip"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                />
+                <p className="text-xs text-gray-500 mt-1">Accepted: PDF, DOC, DOCX, ZIP (Max 10MB)</p>
               </div>
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-4 rounded-lg font-semibold text-lg hover:from-blue-700 hover:to-indigo-800 transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-xl"
+                disabled={isSubmitting}
+                className="w-full bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-4 rounded-lg font-semibold text-lg hover:from-blue-700 hover:to-indigo-800 transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center"
               >
-                Submit Application
+                {isSubmitting ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Submitting...
+                  </>
+                ) : (
+                  'Submit Application'
+                )}
               </button>
                 </form>
               </div>
