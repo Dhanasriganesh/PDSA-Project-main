@@ -4,18 +4,19 @@ function BusinessProcessOutsourcing() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0">
-          <img
-            src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=1600&q=80"
-            alt="Business Process Outsourcing Background"
-            className="w-full h-full object-cover"
-          />
-        </div>
-        <div className="relative z-10 container mx-auto px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto text-center text-white">
-            <h1 className="text-5xl md:text-6xl font-bold mb-6">Business Process Outsourcing</h1>
-            <p className="text-xl text-gray-200 leading-relaxed">
+      <section 
+        className="min-h-screen text-white relative overflow-hidden flex items-center justify-center"
+        style={{
+          backgroundImage: `url('https://images.unsplash.com/photo-1552664730-d307ca884978?w=1600&q=80')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed'
+        }}
+      >
+        <div className="container mx-auto px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto text-center">
+            <h1 className="text-5xl md:text-6xl font-bold mb-6 animate-fade-in-up">Business Process Outsourcing</h1>
+            <p className="text-xl text-gray-200 leading-relaxed animate-fade-in-up-delay">
               Streamline operations and reduce costs with our comprehensive BPO solutions
             </p>
           </div>

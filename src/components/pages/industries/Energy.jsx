@@ -4,10 +4,15 @@ function Energy() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="bg-slate-900 text-white h-[65vh] py-16 relative overflow-hidden flex items-center">
-        <div className="absolute inset-0">
-          <img src="https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=1600&q=80" alt="" className="w-full h-full object-cover" />
-        </div>
+      <section 
+        className="min-h-screen text-white relative overflow-hidden flex items-center justify-center"
+        style={{
+          backgroundImage: `url('https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=1600&q=80')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed'
+        }}
+      >
         <div className="absolute inset-0 bg-black/30"></div>
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0" style={{
@@ -16,13 +21,11 @@ function Energy() {
           }}></div>
         </div>
         <div className="container mx-auto px-6 lg:px-8 relative z-10">
-          <div className="flex justify-center items-center">
-            <div className="text-center">
-              <h1 className="text-5xl md:text-6xl font-bold mb-6 text-white" style={{textShadow: '2px 2px 8px rgba(0,0,0,0.8)'}}>Energy Industry</h1>
-              <p className="text-xl text-white leading-relaxed" style={{textShadow: '1px 1px 4px rgba(0,0,0,0.8)'}}>
-                Smart energy solutions for sustainable operations, grid optimization, and renewable energy management
-              </p>
-            </div>
+          <div className="text-center">
+            <h1 className="text-5xl md:text-6xl font-bold mb-6 text-white animate-fade-in-up" style={{textShadow: '2px 2px 8px rgba(0,0,0,0.8)'}}>Energy Industry</h1>
+            <p className="text-xl text-white leading-relaxed animate-fade-in-up-delay" style={{textShadow: '1px 1px 4px rgba(0,0,0,0.8)'}}>
+              Smart energy solutions for sustainable operations, grid optimization, and renewable energy management
+            </p>
           </div>
         </div>
       </section>

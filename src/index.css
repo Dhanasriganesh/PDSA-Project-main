@@ -118,7 +118,6 @@ html {
   animation: marquee-left 15s linear infinite;
   will-change: transform;
 }
-
 .animate-marquee-right {
   animation: marquee-right 25s linear infinite;
   will-change: transform;

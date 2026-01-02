@@ -28,18 +28,19 @@ function Education() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0">
-          <img
-            src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=1600&q=80"
-            alt="Education Background"
-            className="w-full h-full object-cover"
-          />
-        </div>
-        <div className="relative z-10 container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center text-white">
-            <h1 className="text-5xl md:text-6xl font-bold mb-6">Education Solutions</h1>
-            <p className="text-xl text-gray-200 mb-8">
+      <section 
+        className="min-h-screen text-white relative overflow-hidden flex items-center justify-center"
+        style={{
+          backgroundImage: `url('https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=1600&q=80')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed'
+        }}
+      >
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto text-center">
+            <h1 className="text-5xl md:text-6xl font-bold mb-6 animate-fade-in-up">Education Solutions</h1>
+            <p className="text-xl text-gray-200 mb-8 animate-fade-in-up-delay">
               Innovative educational technology solutions that enhance learning experiences and institutional efficiency
             </p>
             <Link
