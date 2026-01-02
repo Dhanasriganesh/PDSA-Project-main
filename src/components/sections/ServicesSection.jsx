@@ -93,7 +93,7 @@ function ServicesSection() {
   };
 
   return (
-    <section ref={sectionRef} className="relative py-16 md:py-24 overflow-hidden bg-white">
+    <section ref={sectionRef} className="relative py-12 md:py-16 overflow-hidden bg-white">
       {/* Animated Background Pattern */}
       <div className="absolute inset-0 opacity-30">
         <div className="absolute inset-0 animate-pattern-move" style={{

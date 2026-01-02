@@ -67,7 +67,7 @@ function TestimonialsSection() {
   const currentTestimonial = testimonials[currentIndex];
 
   return (
-    <section className="relative py-12 md:py-16 overflow-hidden">
+    <section className="relative py-10 md:py-12 overflow-hidden">
       {/* Advanced Background with Multiple Layers */}
       <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900"></div>
       

@@ -124,7 +124,7 @@ function IndustryExperienceSection() {
   return (
     <section 
       ref={sectionRef}
-      className="relative py-24 md:py-32 bg-white overflow-hidden"
+      className="relative py-12 md:py-16 bg-white overflow-hidden"
     >
       {/* Subtle Background Pattern */}
       <div className="absolute inset-0 opacity-[0.02]">

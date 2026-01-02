@@ -52,7 +52,7 @@ function WhyChooseUsSection() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative py-16 md:py-24 overflow-hidden">
+    <section ref={sectionRef} className="relative py-12 md:py-16 overflow-hidden">
       {/* Base Gradient Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40"></div>
       

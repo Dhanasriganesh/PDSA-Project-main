@@ -36,7 +36,7 @@ function CTASection() {
   ];
 
   return (
-    <section ref={sectionRef} className="relative py-16 md:py-24 bg-gradient-to-b from-white via-blue-50 to-blue-50/50 overflow-hidden">
+    <section ref={sectionRef} className="relative py-12 md:py-16 bg-gradient-to-b from-white via-blue-50 to-blue-50/50 overflow-hidden">
       {/* Animated Background Shapes */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Large Abstract Shapes */}

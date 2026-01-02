@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 // Custom hook for typing animation
-const useTypingAnimation = (text, speed = 50) => {
+const useTypingAnimation = (text, speed = 15) => {
   const [displayText, setDisplayText] = useState('');
   const [isVisible, setIsVisible] = useState(false);
   const elementRef = useRef(null);
@@ -44,11 +44,34 @@ const useTypingAnimation = (text, speed = 50) => {
 function AboutSection() {
   const [counts, setCounts] = useState({ projects: 0, years: 0, clients: 0 });
   const [hasAnimated, setHasAnimated] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
   const statsRef = useRef(null);
+  const sectionRef = useRef(null);
 
   const missionText = "At PDSA Technology, we are committed to delivering cutting-edge software solutions that drive business growth and digital transformation. Our expertise spans across multiple industries, helping organizations leverage technology to achieve their strategic objectives. We believe in the power of innovation, quality, and customer-centric approach to create solutions that not only meet current needs but also prepare businesses for future challenges.";
   
   const [typedMission, missionRef] = useTypingAnimation(missionText, 15);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -85,43 +108,147 @@ function AboutSection() {
       }
     }, 16);
   };
+
+  const expertise = [
+    { name: 'Web Development', icon: '🌐', color: '#2563EB' },
+    { name: 'Mobile Apps', icon: '📱', color: '#059669' },
+    { name: 'Cloud Solutions', icon: '☁️', color: '#7C3AED' },
+    { name: 'AI & ML', icon: '🤖', color: '#DC2626' },
+    { name: 'Healthcare IT', icon: '🏥', color: '#2563EB' },
+    { name: 'E-commerce', icon: '🛒', color: '#F59E0B' },
+    { name: 'Enterprise Software', icon: '💼', color: '#475569' },
+    { name: 'Digital Marketing', icon: '📊', color: '#EC4899' }
+  ];
+
+  const values = [
+    {
+      title: 'Innovation First',
+      description: 'We stay ahead of technology trends to deliver innovative solutions that give our clients a competitive edge.',
+      icon: (
+        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+      ),
+      color: '#2563EB',
+      image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+    },
+    {
+      title: 'Quality Assured',
+      description: 'Our rigorous quality assurance processes ensure that every solution we deliver meets the highest standards.',
+      icon: (
+        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      ),
+      color: '#059669',
+      image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+    },
+    {
+      title: 'Client Focused',
+      description: 'We build long-term partnerships with our clients, understanding their unique needs and delivering tailored solutions.',
+      icon: (
+        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+        </svg>
+      ),
+      color: '#7C3AED',
+      image: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+    }
+  ];
+
   return (
-    <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
-      <div className="container mx-auto px-6 lg:px-8">
-        {/* About PDSA Technology */}
-        <div className="max-w-6xl mx-auto mb-20">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-gray-900 to-blue-700 bg-clip-text text-transparent">
-              About PDSA Technology
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Pioneering digital transformation through innovative technology solutions
+    <>
+      {/* Hero Section with Parallax Effect */}
+      <section 
+        className="relative h-[60vh] md:h-[70vh] text-white overflow-hidden flex items-center justify-center"
+        style={{
+          backgroundImage: `url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed'
+        }}
+      >
+        {/* Dark Overlay */}
+        <div className="absolute inset-0 bg-black/40"></div>
+        
+        {/* Content */}
+        <div className="container mx-auto px-6 lg:px-8 relative z-10">
+          <div className="max-w-3xl mx-auto text-center">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+              About PDSA Technologies
+            </h1>
+            <p className="text-xl md:text-2xl text-gray-200">
+              Leading IT consulting firm transforming businesses through innovative technology solutions
             </p>
           </div>
+        </div>
+      </section>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <h3 className="text-3xl font-bold mb-6 text-gray-800">Our Mission</h3>
+      {/* Main Content Section */}
+      <section ref={sectionRef} className="relative py-12 md:py-16 bg-white overflow-hidden">
+      {/* Subtle Background Pattern */}
+      <div className="absolute inset-0 opacity-[0.02]">
+        <div 
+          className="absolute inset-0"
+          style={{
+            backgroundImage: 'radial-gradient(circle at 2px 2px, #1e293b 1px, transparent 0)',
+            backgroundSize: '40px 40px',
+          }}
+        ></div>
+      </div>
+
+      {/* Subtle Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-50/20 to-transparent pointer-events-none"></div>
+
+      <div className="container mx-auto px-6 lg:px-8 relative z-10">
+        {/* About PDSA Technology */}
+        <div className="max-w-6xl mx-auto mb-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-12">
+            {/* Mission Section */}
+            <div 
+              className={`transition-all duration-700 ${
+                isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'
+              }`}
+              style={{ transitionDelay: '0.2s' }}
+            >
+              <div className="inline-block mb-4">
+                <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-md text-xs font-semibold uppercase tracking-wide">
+                  Our Mission
+                </span>
+              </div>
+              <h3 className="text-3xl md:text-4xl font-bold mb-6 text-gray-900">Our Mission</h3>
               <div ref={missionRef} className="text-lg text-gray-600 leading-relaxed">
-                {typedMission}<span className="animate-pulse">|</span>
+                {typedMission}
+                <span className="animate-pulse text-blue-600">|</span>
               </div>
             </div>
-            <div className="bg-white rounded-3xl p-8 shadow-2xl">
-              <h4 className="text-2xl font-bold mb-6 text-gray-800">Our Expertise</h4>
+
+            {/* Expertise Section */}
+            <div 
+              className={`bg-white rounded-2xl p-8 shadow-lg border border-gray-100 transition-all duration-700 ${
+                isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'
+              }`}
+              style={{ transitionDelay: '0.4s' }}
+            >
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-1 h-8 bg-blue-600 rounded-full"></div>
+                <h4 className="text-2xl font-bold text-gray-900">Our Expertise</h4>
+              </div>
               <div className="grid grid-cols-2 gap-4">
-                {[
-                  'Web Development',
-                  'Mobile Apps',
-                  'Cloud Solutions',
-                  'AI & ML',
-                  'Healthcare IT',
-                  'E-commerce',
-                  'Enterprise Software',
-                  'Digital Marketing'
-                ].map((skill, idx) => (
-                  <div key={idx} className="group flex items-center hover:bg-blue-50 rounded-lg p-2 transition-all duration-300 cursor-pointer">
-                    <div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full mr-3 group-hover:scale-125 transition-transform duration-300"></div>
-                    <span className="text-gray-700 group-hover:text-blue-600 transition-colors duration-300 group-hover:font-semibold">{skill}</span>
+                {expertise.map((skill, idx) => (
+                  <div 
+                    key={idx} 
+                    className="group flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 border border-transparent hover:border-blue-200 transition-all duration-300 cursor-pointer"
+                    style={{
+                      animationDelay: `${0.6 + idx * 0.1}s`
+                    }}
+                  >
+                    <span className="text-2xl">{skill.icon}</span>
+                    <span 
+                      className="text-gray-700 font-medium group-hover:text-blue-600 transition-colors duration-300"
+                    >
+                      {skill.name}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -131,74 +258,109 @@ function AboutSection() {
 
         {/* Company Overview */}
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-blue-900">
-              Company Overview
+          <div 
+            className={`text-center mb-10 transition-all duration-700 ${
+              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}
+            style={{ transitionDelay: '0.6s' }}
+          >
+            <div className="inline-block mb-6">
+              <span className="px-4 py-2 bg-blue-50 text-blue-700 rounded-md text-xs font-semibold uppercase tracking-wider border border-blue-100">
+                Company Overview
+              </span>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">
+              Our Core Values
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-            <div className="bg-white rounded-2xl p-8 shadow-xl text-center hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 cursor-pointer hover:bg-gradient-to-br hover:from-blue-50 hover:to-blue-100 group">
-              <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <h3 className="text-2xl font-bold mb-4 text-gray-800">Innovation First</h3>
-              <p className="text-gray-600">
-                We stay ahead of technology trends to deliver innovative solutions that give our clients a competitive edge.
-              </p>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+            {values.map((value, idx) => (
+              <div
+                key={idx}
+                className={`group relative bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2 cursor-pointer ${
+                  isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+                }`}
+                style={{ 
+                  transitionDelay: `${0.8 + idx * 0.1}s`,
+                }}
+              >
+                {/* Background Image */}
+                <div className="absolute inset-0 overflow-hidden">
+                  <img
+                    src={value.image}
+                    alt={value.title}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70"></div>
+                </div>
 
-            <div className="bg-white rounded-2xl p-8 shadow-xl text-center hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 cursor-pointer hover:bg-gradient-to-br hover:from-blue-50 hover:to-blue-100 group">
-              <div className="w-16 h-16 bg-gradient-to-r from-indigo-500 to-blue-400 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                {/* Content */}
+                <div className="relative z-10 p-8 text-white h-full flex flex-col justify-between min-h-[300px]">
+                  <div>
+                    <div 
+                      className="w-16 h-16 rounded-xl flex items-center justify-center mb-6 backdrop-blur-sm"
+                      style={{
+                        backgroundColor: `${value.color}40`,
+                      }}
+                    >
+                      <div style={{ color: value.color }}>
+                        {value.icon}
+                      </div>
+                    </div>
+                    <h3 className="text-2xl font-bold mb-4">{value.title}</h3>
+                    <p className="text-gray-200 leading-relaxed">
+                      {value.description}
+                    </p>
+                  </div>
+                  
+                  {/* Accent Bar */}
+                  <div 
+                    className="absolute bottom-0 left-0 right-0 h-1 transition-all duration-300"
+                    style={{
+                      backgroundColor: value.color,
+                    }}
+                  ></div>
+                </div>
               </div>
-              <h3 className="text-2xl font-bold mb-4 text-gray-800">Quality Assured</h3>
-              <p className="text-gray-600">
-                Our rigorous quality assurance processes ensure that every solution we deliver meets the highest standards.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-2xl p-8 shadow-xl text-center hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 cursor-pointer hover:bg-gradient-to-br hover:from-blue-50 hover:to-blue-100 group">
-              <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-indigo-400 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-              </div>
-              <h3 className="text-2xl font-bold mb-4 text-gray-800">Client Focused</h3>
-              <p className="text-gray-600">
-                We build long-term partnerships with our clients, understanding their unique needs and delivering tailored solutions.
-              </p>
-            </div>
+            ))}
           </div>
 
-          <div ref={statsRef} className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-3xl p-12 text-white text-center">
-            <h3 className="text-3xl font-bold mb-6">Why Choose PDSA Technology?</h3>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-              <div>
-                <div className="text-4xl font-bold mb-2">{counts.projects}+</div>
-                <div className="text-blue-100">Projects Delivered</div>
+          {/* Stats Section */}
+          <div 
+            ref={statsRef} 
+            className="relative bg-gray-50 rounded-xl p-8 md:p-12 border border-gray-200"
+          >
+            <div className="text-center mb-10">
+              <h3 className="text-2xl md:text-3xl font-bold mb-3 text-gray-900">Why Choose PDSA Technology?</h3>
+              <p className="text-gray-600 text-base max-w-2xl mx-auto">
+                Delivering excellence through innovation, quality, and dedication
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+              <div className="text-center p-4 bg-white rounded-lg border border-gray-100 hover:border-blue-300 hover:shadow-md transition-all duration-300">
+                <div className="text-4xl md:text-5xl font-bold mb-2 text-blue-600">{counts.projects}+</div>
+                <div className="text-sm md:text-base text-gray-600 font-medium">Projects Delivered</div>
               </div>
-              <div>
-                <div className="text-4xl font-bold mb-2">{counts.years}+</div>
-                <div className="text-blue-100">Years Experience</div>
+              <div className="text-center p-4 bg-white rounded-lg border border-gray-100 hover:border-blue-300 hover:shadow-md transition-all duration-300">
+                <div className="text-4xl md:text-5xl font-bold mb-2 text-blue-600">{counts.years}+</div>
+                <div className="text-sm md:text-base text-gray-600 font-medium">Years Experience</div>
               </div>
-              <div>
-                <div className="text-4xl font-bold mb-2">{counts.clients}+</div>
-                <div className="text-blue-100">Happy Clients</div>
+              <div className="text-center p-4 bg-white rounded-lg border border-gray-100 hover:border-blue-300 hover:shadow-md transition-all duration-300">
+                <div className="text-4xl md:text-5xl font-bold mb-2 text-blue-600">{counts.clients}+</div>
+                <div className="text-sm md:text-base text-gray-600 font-medium">Happy Clients</div>
               </div>
-              <div>
-                <div className="text-4xl font-bold mb-2">24/7</div>
-                <div className="text-blue-100">Support Available</div>
+              <div className="text-center p-4 bg-white rounded-lg border border-gray-100 hover:border-blue-300 hover:shadow-md transition-all duration-300">
+                <div className="text-4xl md:text-5xl font-bold mb-2 text-blue-600">24/7</div>
+                <div className="text-sm md:text-base text-gray-600 font-medium">Support Available</div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </section>
+    </>
   );
 }
 
