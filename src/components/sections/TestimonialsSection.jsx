@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { FaChevronLeft, FaChevronRight, FaStar } from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
+import { FaChevronLeft, FaChevronRight, FaStar, FaQuoteLeft } from 'react-icons/fa';
 
 const testimonials = [
   {
@@ -38,102 +38,172 @@ const testimonials = [
 
 function TestimonialsSection() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [direction, setDirection] = useState(0); // 1 for next, -1 for prev
+
+  // Auto-rotate testimonials
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDirection(1);
+      setCurrentIndex((prev) => (prev + 1) % testimonials.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   const nextTestimonial = () => {
+    setDirection(1);
     setCurrentIndex((prev) => (prev + 1) % testimonials.length);
   };
 
   const prevTestimonial = () => {
+    setDirection(-1);
     setCurrentIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
   };
 
   const goToTestimonial = (index) => {
+    setDirection(index > currentIndex ? 1 : -1);
     setCurrentIndex(index);
   };
 
   const currentTestimonial = testimonials[currentIndex];
 
   return (
-    <section className="py-20 bg-gradient-to-b from-yellow-50/50 to-yellow-100/30">
-      <div className="container mx-auto px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto">
-          {/* Company Card */}
-          <div className="bg-white rounded-xl shadow-md p-4 mb-6 flex items-center justify-between">
-            <h3 className="text-2xl font-bold text-green-600">{currentTestimonial.company}</h3>
-            <div className="flex gap-1">
-              <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-              <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-              <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-            </div>
-          </div>
+    <section className="relative py-12 md:py-16 overflow-hidden">
+      {/* Advanced Background with Multiple Layers */}
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900"></div>
+      
+      {/* Animated Gradient Overlay */}
+      <div className="absolute inset-0 opacity-40">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/30 via-purple-600/30 to-cyan-600/30 animate-gradient-shift"></div>
+      </div>
+      
+      {/* Pattern Overlay */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `radial-gradient(circle at 2px 2px, rgba(255, 255, 255, 0.3) 1px, transparent 0)`,
+          backgroundSize: '50px 50px'
+        }}></div>
+      </div>
+      
+      {/* Geometric Shapes */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-10 right-10 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl animate-pulse-slow"></div>
+        <div className="absolute bottom-10 left-10 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl animate-pulse-slow" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-cyan-500/5 rounded-full blur-3xl animate-pulse-slow" style={{ animationDelay: '2s' }}></div>
+      </div>
+      
+      {/* Content Container */}
+      <div className="container mx-auto px-6 lg:px-8 relative z-10">
+        {/* Section Header */}
+        <div className="text-center mb-8">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">
+            What Our <span className="text-blue-400">Clients</span> Say
+          </h2>
+          <p className="text-gray-300 text-sm md:text-base max-w-2xl mx-auto">
+            Trusted by industry leaders worldwide. Here's what they have to say about working with us.
+          </p>
+        </div>
 
-          {/* Stars */}
-          <div className="flex justify-center gap-1 mb-8">
-            {[...Array(5)].map((_, i) => (
-              <FaStar
-                key={i}
-                className={`text-xl ${
-                  i < currentTestimonial.rating ? 'text-yellow-400' : 'text-gray-300'
+        {/* Testimonials Container */}
+        <div className="max-w-5xl mx-auto">
+          <div className="relative">
+            {/* Main Testimonial Card */}
+            <div className="testimonial-card-wrapper mb-6">
+              <div 
+                key={currentIndex}
+                className={`testimonial-card bg-white/10 backdrop-blur-xl rounded-xl shadow-2xl border border-white/20 p-6 md:p-8 relative overflow-hidden group cursor-pointer transition-all duration-500 ${
+                  direction === 1 ? 'animate-slide-in-right' : direction === -1 ? 'animate-slide-in-left' : 'animate-fade-in'
                 }`}
-              />
-            ))}
-          </div>
+              >
+                {/* Hover gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 via-purple-500/20 to-cyan-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl"></div>
+                
+                {/* Decorative corner elements */}
+                <div className="absolute top-0 left-0 w-20 h-20 bg-gradient-to-br from-blue-500/20 to-transparent rounded-br-full opacity-50"></div>
+                <div className="absolute bottom-0 right-0 w-20 h-20 bg-gradient-to-tl from-purple-500/20 to-transparent rounded-tl-full opacity-50"></div>
+                
+                <div className="relative z-10">
+                  {/* Quote Icon */}
+                  <div className="flex justify-center mb-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                      <FaQuoteLeft className="text-white text-lg" />
+                    </div>
+                  </div>
 
-          {/* Testimonial Text with Large Quotes */}
-          <div className="relative bg-white rounded-2xl shadow-lg p-8 md:p-12 mb-8">
-            <div className="flex items-start justify-center gap-4">
-              {/* Left Quote */}
-              <div className="text-6xl md:text-8xl text-orange-500 font-serif leading-none flex-shrink-0">
-                "
-              </div>
-              
-              {/* Testimonial Text */}
-              <p className="text-gray-800 text-lg md:text-xl leading-relaxed flex-1 text-center">
-                {currentTestimonial.text}
-              </p>
-              
-              {/* Right Quote */}
-              <div className="text-6xl md:text-8xl text-orange-500 font-serif leading-none flex-shrink-0">
-                "
+                  {/* Stars Rating */}
+                  <div className="flex justify-center gap-1.5 mb-5">
+                    {[...Array(5)].map((_, i) => (
+                      <FaStar
+                        key={i}
+                        className={`text-lg transition-all duration-300 ${
+                          i < currentTestimonial.rating 
+                            ? 'text-yellow-400 scale-110 drop-shadow-lg' 
+                            : 'text-gray-600'
+                        }`}
+                        style={{
+                          animationDelay: `${i * 0.1}s`,
+                          filter: i < currentTestimonial.rating ? 'drop-shadow(0 0 8px rgba(251, 191, 36, 0.6))' : 'none'
+                        }}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Testimonial Text */}
+                  <p className="text-white text-base md:text-lg leading-relaxed text-center mb-5 font-light italic group-hover:text-blue-100 transition-colors duration-300">
+                    "{currentTestimonial.text}"
+                  </p>
+
+                  {/* Company Badge */}
+                  <div className="flex justify-center mb-4">
+                    <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-sm rounded-full px-4 py-2 border border-white/20 group-hover:border-blue-400/50 group-hover:from-blue-500/30 group-hover:to-purple-500/30 transition-all duration-300">
+                      <h3 className="text-lg font-bold text-white">{currentTestimonial.company}</h3>
+                    </div>
+                  </div>
+
+                  {/* Author Info */}
+                  <div className="text-center">
+                    <p className="text-white font-semibold text-base mb-0.5">{currentTestimonial.name}</p>
+                    <p className="text-gray-400 text-xs">{currentTestimonial.position}</p>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Navigation */}
-          <div className="flex items-center justify-center gap-4">
-            {/* Left Arrow */}
-            <button
-              onClick={prevTestimonial}
-              className="w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center hover:shadow-lg transition-all duration-300 hover:scale-110"
-              aria-label="Previous testimonial"
-            >
-              <FaChevronLeft className="text-gray-700" />
-            </button>
+            {/* Navigation Controls */}
+            <div className="flex items-center justify-center gap-4">
+              {/* Left Arrow */}
+              <button
+                onClick={prevTestimonial}
+                className="nav-button w-12 h-12 bg-white/10 backdrop-blur-md rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white/20 hover:border-blue-400/50 hover:scale-110 transition-all duration-300 shadow-lg hover:shadow-xl group"
+                aria-label="Previous testimonial"
+              >
+                <FaChevronLeft className="text-lg group-hover:text-blue-400 transition-colors duration-300" />
+              </button>
 
-            {/* Pagination Dots */}
-            <div className="flex gap-2">
-              {testimonials.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => goToTestimonial(index)}
-                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                    index === currentIndex
-                      ? 'bg-orange-500 w-8'
-                      : 'bg-gray-300 hover:bg-gray-400'
-                  }`}
-                  aria-label={`Go to testimonial ${index + 1}`}
-                />
-              ))}
+              {/* Pagination Dots */}
+              <div className="flex gap-2">
+                {testimonials.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => goToTestimonial(index)}
+                    className={`pagination-dot transition-all duration-300 rounded-full ${
+                      index === currentIndex
+                        ? 'w-8 h-2.5 bg-gradient-to-r from-blue-400 to-purple-500 shadow-lg shadow-blue-500/50'
+                        : 'w-2.5 h-2.5 bg-white/30 hover:bg-white/50 hover:scale-125'
+                    }`}
+                    aria-label={`Go to testimonial ${index + 1}`}
+                  />
+                ))}
+              </div>
+
+              {/* Right Arrow */}
+              <button
+                onClick={nextTestimonial}
+                className="nav-button w-12 h-12 bg-white/10 backdrop-blur-md rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white/20 hover:border-blue-400/50 hover:scale-110 transition-all duration-300 shadow-lg hover:shadow-xl group"
+                aria-label="Next testimonial"
+              >
+                <FaChevronRight className="text-lg group-hover:text-blue-400 transition-colors duration-300" />
+              </button>
             </div>
-
-            {/* Right Arrow */}
-            <button
-              onClick={nextTestimonial}
-              className="w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center hover:shadow-lg transition-all duration-300 hover:scale-110"
-              aria-label="Next testimonial"
-            >
-              <FaChevronRight className="text-gray-700" />
-            </button>
           </div>
         </div>
       </div>

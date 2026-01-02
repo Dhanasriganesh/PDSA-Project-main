@@ -25,7 +25,7 @@ import {
 } from 'react-icons/fa';
 
 // Custom hook for typing animation
-const useTypingAnimation = (text, speed = 50) => {
+const useTypingAnimation = (text, speed = 12) => {
   const [displayText, setDisplayText] = useState('');
   const [isVisible, setIsVisible] = useState(false);
   const elementRef = useRef(null);
@@ -66,72 +66,214 @@ const useTypingAnimation = (text, speed = 50) => {
 };
 
 const industries = [
-  { name: 'Automobile & Mobility', icon: FaCar, color: 'text-red-600' },
-  { name: 'Product Design', icon: FaPencilRuler, color: 'text-pink-600' },
-  { name: 'Smart Vision', icon: FaBullseye, color: 'text-red-600' },
-  { name: 'Web Development', icon: FaLaptopCode, color: 'text-gray-600' },
-  { name: 'Platform Integration', icon: FaPlug, color: 'text-blue-600' },
-  { name: 'Financial Services', icon: FaChartLine, color: 'text-green-600' },
-  { name: 'Healthcare', icon: FaHospital, color: 'text-blue-600' },
-  { name: 'Media, Entertainment & Gaming', icon: FaTv, color: 'text-purple-600' },
-  { name: 'Technology Enablement', icon: FaServer, color: 'text-gray-600' },
-  { name: 'Telecommunications', icon: FaPhoneAlt, color: 'text-blue-600' },
-  { name: 'Energy', icon: FaBolt, color: 'text-orange-600' },
-  { name: 'Consumer & Industrial Products', icon: FaIndustry, color: 'text-pink-600' },
-  { name: 'Transportation & Travel', icon: FaPlane, color: 'text-blue-600' },
-  { name: 'Banking & Financial', icon: FaUniversity, color: 'text-indigo-600' },
-  { name: 'Education', icon: FaGraduationCap, color: 'text-purple-600' },
-  { name: 'Energy & Utility', icon: FaBolt, color: 'text-orange-600' },
-  { name: 'Government', icon: FaBuilding, color: 'text-gray-600' },
-  { name: 'Healthcare & Life Science', icon: FaHospital, color: 'text-pink-600' },
-  { name: 'Insurance', icon: FaShieldAlt, color: 'text-cyan-600' },
-  { name: 'Logistics & Warehousing', icon: FaBoxes, color: 'text-amber-600' },
-  { name: 'Retail & Consumer Goods', icon: FaShoppingCart, color: 'text-indigo-600' },
-  { name: 'Telecom & Media', icon: FaSatellite, color: 'text-violet-600' },
-  { name: 'Oil & Gas', icon: FaOilCan, color: 'text-red-600' },
-  { name: 'Travel & Hospitality', icon: FaHotel, color: 'text-sky-600' },
+  { name: 'Automobile & Mobility', icon: FaCar, color: '#DC2626', image: 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
+  { name: 'Product Design', icon: FaPencilRuler, color: '#EC4899', image: 'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
+  { name: 'Smart Vision', icon: FaBullseye, color: '#DC2626', image: 'https://images.unsplash.com/photo-1555255707-c07966088b7b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
+  { name: 'Web Development', icon: FaLaptopCode, color: '#475569', image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
+  { name: 'Platform Integration', icon: FaPlug, color: '#2563EB', image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
+  { name: 'Financial Services', icon: FaChartLine, color: '#059669', image: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
+  { name: 'Healthcare', icon: FaHospital, color: '#2563EB', image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
+  { name: 'Media, Entertainment & Gaming', icon: FaTv, color: '#7C3AED', image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
+  { name: 'Technology Enablement', icon: FaServer, color: '#475569', image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
+  { name: 'Telecommunications', icon: FaPhoneAlt, color: '#2563EB', image: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
+  { name: 'Energy', icon: FaBolt, color: '#F59E0B', image: 'https://images.unsplash.com/photo-1466611653911-95081537e5b7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
+  { name: 'Consumer & Industrial Products', icon: FaIndustry, color: '#EC4899', image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
+  { name: 'Transportation & Travel', icon: FaPlane, color: '#2563EB', image: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
+  { name: 'Banking & Financial', icon: FaUniversity, color: '#4F46E5', image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
+  { name: 'Education', icon: FaGraduationCap, color: '#7C3AED', image: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
+  { name: 'Energy & Utility', icon: FaBolt, color: '#F59E0B', image: 'https://images.unsplash.com/photo-1466611653911-95081537e5b7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
+  { name: 'Government', icon: FaBuilding, color: '#475569', image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
+  { name: 'Healthcare & Life Science', icon: FaHospital, color: '#EC4899', image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
+  { name: 'Insurance', icon: FaShieldAlt, color: '#06B6D4', image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
+  { name: 'Logistics & Warehousing', icon: FaBoxes, color: '#F59E0B', image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
+  { name: 'Retail & Consumer Goods', icon: FaShoppingCart, color: '#4F46E5', image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
+  { name: 'Telecom & Media', icon: FaSatellite, color: '#8B5CF6', image: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
+  { name: 'Oil & Gas', icon: FaOilCan, color: '#DC2626', image: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
+  { name: 'Travel & Hospitality', icon: FaHotel, color: '#0EA5E9', image: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
 ];
 
 function IndustryExperienceSection() {
   const industryText = "You want a strategic partner to understand your market, but you also need them to understand your industry — Since your company is special, we start with a discovery phase to define your distinct brand attributes and benefits. We assist you in recognising business dynamics, identifying shortages, predicting opportunities, and connecting with customers by providing deep industry insights.";
   
   const [typedIndustry, industryRef] = useTypingAnimation(industryText, 12);
+  const [isVisible, setIsVisible] = useState(false);
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+  const sectionRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current);
+      }
+    };
+  }, []);
+
   return (
-    <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
-      <div className="container mx-auto px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">
-            Our Industry Experience
+    <section 
+      ref={sectionRef}
+      className="relative py-24 md:py-32 bg-white overflow-hidden"
+    >
+      {/* Subtle Background Pattern */}
+      <div className="absolute inset-0 opacity-[0.02]">
+        <div 
+          className="absolute inset-0"
+          style={{
+            backgroundImage: 'radial-gradient(circle at 2px 2px, #1e293b 1px, transparent 0)',
+            backgroundSize: '40px 40px',
+          }}
+        ></div>
+      </div>
+
+      {/* Subtle Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-50/30 to-transparent pointer-events-none"></div>
+
+      {/* Content Container */}
+      <div className="container mx-auto px-6 lg:px-8 relative z-10">
+        {/* Section Header */}
+        <div 
+          ref={industryRef}
+          className={`text-center mb-16 md:mb-20 transition-all duration-700 ${
+            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}
+        >
+          <div className="inline-block mb-6">
+            <span className="px-4 py-2 bg-blue-50 text-blue-700 rounded-md text-xs font-semibold uppercase tracking-wider border border-blue-100">
+              Industry Expertise
+            </span>
+          </div>
+          
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-gray-900">
+            Our Industry <span className="text-blue-600">Experience</span>
           </h2>
-          <div ref={industryRef} className="text-lg text-gray-600 max-w-4xl mx-auto leading-relaxed">
-            {typedIndustry}<span className="animate-pulse">|</span>
+          
+          <div className="text-lg md:text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
+            {typedIndustry}
+            <span className="animate-pulse text-blue-600">|</span>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
+        {/* Industries Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
           {industries.map((industry, idx) => {
             const IconComponent = industry.icon;
+            const isHovered = hoveredIndex === idx;
+            const delay = idx * 0.03;
+            
             return (
               <div
                 key={idx}
-                className="group relative bg-gradient-to-br from-white via-blue-50/30 to-indigo-50/50 p-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-500 transform hover:-translate-y-1 border border-blue-100/50 hover:border-blue-300/70 backdrop-blur-sm overflow-hidden text-center"
+                onMouseEnter={() => setHoveredIndex(idx)}
+                onMouseLeave={() => setHoveredIndex(null)}
+                className={`group relative transition-all duration-500 ${
+                  isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+                }`}
+                style={{ transitionDelay: `${delay}s` }}
               >
-                {/* Glowing border effect */}
-                <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-blue-400/20 via-indigo-400/20 to-cyan-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-sm"></div>
-                <div className="absolute inset-[1px] rounded-lg bg-gradient-to-br from-white via-blue-50/30 to-indigo-50/50"></div>
-                
-                {/* Content */}
-                <div className="relative z-10">
-                  <div className="flex justify-center mb-2 group-hover:scale-110 transition-all duration-500">
-                    <IconComponent className={`text-2xl md:text-3xl ${industry.color} group-hover:scale-110 transition-all duration-300`} />
+                {/* Card */}
+                <div 
+                  className="relative h-full bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden"
+                  style={{
+                    transform: isHovered ? 'translateY(-4px)' : 'translateY(0)',
+                  }}
+                >
+                  {/* Background Image */}
+                  <div className="absolute inset-0 overflow-hidden">
+                    <img
+                      src={industry.image}
+                      alt={industry.name}
+                      className={`w-full h-full object-cover transition-all duration-500 ${
+                        isHovered ? 'scale-110' : 'scale-100'
+                      }`}
+                    />
+                    {/* Subtle dark overlay for text readability */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
                   </div>
-                  <h3 className="text-xs md:text-sm font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-300 leading-tight">
-                    {industry.name}
-                  </h3>
+
+                  {/* Accent Bar */}
+                  <div 
+                    className="absolute top-0 left-0 right-0 h-1.5 transition-all duration-300 z-10"
+                    style={{
+                      backgroundColor: industry.color,
+                    }}
+                  ></div>
+
+                  {/* Content */}
+                  <div className="relative z-10 p-6 h-full flex flex-col items-center justify-center text-center min-h-[180px]">
+                    {/* Icon Container */}
+                    <div 
+                      className="mb-4 flex justify-center transition-all duration-300"
+                      style={{
+                        transform: isHovered ? 'scale(1.15) rotate(5deg)' : 'scale(1) rotate(0deg)',
+                      }}
+                    >
+                      <div 
+                        className="p-4 rounded-xl backdrop-blur-sm transition-all duration-300 shadow-lg"
+                        style={{
+                          backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                        }}
+                      >
+                        <IconComponent 
+                          className="text-3xl md:text-4xl transition-all duration-300" 
+                          style={{
+                            color: industry.color,
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Industry Name */}
+                    <h3 
+                      className="text-sm font-bold text-white leading-tight transition-all duration-300 drop-shadow-lg"
+                      style={{
+                        textShadow: '0 2px 8px rgba(0,0,0,0.3)',
+                        transform: isHovered ? 'translateY(-2px)' : 'translateY(0)',
+                      }}
+                    >
+                      {industry.name}
+                    </h3>
+                  </div>
+
+                  {/* Hover Indicator */}
+                  <div 
+                    className="absolute bottom-0 left-0 right-0 h-1 transition-all duration-300 z-10"
+                    style={{
+                      backgroundColor: industry.color,
+                      transform: isHovered ? 'scaleX(1)' : 'scaleX(0)',
+                      transformOrigin: 'center',
+                    }}
+                  ></div>
                 </div>
               </div>
             );
           })}
+        </div>
+
+        {/* Bottom CTA */}
+        <div 
+          className={`mt-16 text-center transition-all duration-700 ${
+            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}
+          style={{ transitionDelay: '0.6s' }}
+        >
+          <button className="inline-flex items-center gap-2 px-8 py-3 bg-blue-600 text-white rounded-lg font-semibold shadow-sm hover:bg-blue-700 hover:shadow-md transition-all duration-300">
+            <span>Explore All Industries</span>
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
         </div>
       </div>
     </section>

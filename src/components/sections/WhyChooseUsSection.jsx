@@ -1,47 +1,199 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { FaClock, FaComments, FaAward } from 'react-icons/fa';
 
 const whyChooseUs = [
   {
     title: 'Minimal Timelines',
     description: 'Get Your Projects Done Quickly and Efficiently with PDSA Technologies.',
-    icon: '⚡',
-    percentage: '60%',
+    icon: FaClock,
+    image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    features: ['Fast Delivery', 'Agile Methodology', 'Quick Turnaround'],
   },
   {
     title: 'Effective Communication',
     description: 'Unlock Your Company\'s Potential With Effective Communication Strategies.',
-    icon: '💬',
-    percentage: '95%',
+    icon: FaComments,
+    image: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    features: ['24/7 Support', 'Clear Updates', 'Transparent Process'],
   },
   {
     title: 'High Quality Standards',
     description: 'Get Professional IT Solutions to Create the Perfect Start-Up.',
-    icon: '⭐',
-    percentage: '70%',
+    icon: FaAward,
+    image: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    features: ['Certified Team', 'Best Practices', 'Quality Assurance'],
   },
 ];
 
 function WhyChooseUsSection() {
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const sectionRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.3 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current);
+      }
+    };
+  }, []);
+
   return (
-    <section className="py-20 bg-gradient-to-br from-blue-50 to-indigo-50">
-      <div className="container mx-auto px-6">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">Why Choose Us</h2>
-          <p className="text-lg text-gray-600 mb-4">One of the pioneers of IT solutions is PDSA Technologies.</p>
-          <p className="text-base text-gray-600 max-w-4xl mx-auto leading-relaxed">
+    <section ref={sectionRef} className="relative py-16 md:py-24 overflow-hidden">
+      {/* Base Gradient Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40"></div>
+      
+      {/* Animated Diagonal Stripe Pattern */}
+      <div className="absolute inset-0 opacity-30 animate-pattern-slide" style={{
+        backgroundImage: `repeating-linear-gradient(
+          45deg,
+          transparent,
+          transparent 10px,
+          rgba(59, 130, 246, 0.03) 10px,
+          rgba(59, 130, 246, 0.03) 20px
+        )`
+      }}></div>
+      
+      {/* Mesh Gradient Overlay */}
+      <div className="absolute inset-0 opacity-40">
+        <div className="absolute top-0 left-0 w-1/2 h-full bg-gradient-to-r from-blue-100/20 to-transparent"></div>
+        <div className="absolute bottom-0 right-0 w-1/2 h-full bg-gradient-to-l from-indigo-100/20 to-transparent"></div>
+      </div>
+      
+      {/* Animated Geometric Shapes */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-20 left-10 w-64 h-64 bg-blue-200/10 rounded-full blur-3xl animate-pulse-slow"></div>
+        <div className="absolute bottom-20 right-10 w-80 h-80 bg-indigo-200/10 rounded-full blur-3xl animate-pulse-slow" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-slate-200/10 rounded-full blur-3xl animate-pulse-slow" style={{ animationDelay: '2s' }}></div>
+      </div>
+      
+      {/* Grid Pattern */}
+      <div className="absolute inset-0 opacity-20" style={{
+        backgroundImage: `
+          linear-gradient(rgba(59, 130, 246, 0.05) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(59, 130, 246, 0.05) 1px, transparent 1px)
+        `,
+        backgroundSize: '60px 60px'
+      }}></div>
+      
+      {/* Corner Accents */}
+      <div className="absolute top-0 left-0 w-32 h-32 border-l-4 border-t-4 border-blue-200/30"></div>
+      <div className="absolute bottom-0 right-0 w-32 h-32 border-r-4 border-b-4 border-indigo-200/30"></div>
+      
+      {/* Content Container */}
+      <div className="container mx-auto px-6 lg:px-8 relative z-10">
+        {/* Section Header with Animation */}
+        <div className={`text-center mb-12 md:mb-16 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
+          <div className="inline-block mb-4">
+            <span className="px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold uppercase tracking-wide">
+              Why Choose Us
+            </span>
+          </div>
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            Our <span className="text-blue-600">Competitive Advantages</span>
+          </h2>
+          <p className="text-base md:text-lg text-gray-600 mb-3 max-w-2xl mx-auto">
+            One of the pioneers of IT solutions is PDSA Technologies.
+          </p>
+          <p className="text-sm md:text-base text-gray-500 max-w-3xl mx-auto leading-relaxed">
             We offer our clients the advantage of having hardworking, committed, and talented manpower on demand, wherever and whenever they are needed, at a cost that fits their development budget.
           </p>
         </div>
         
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {whyChooseUs.map((feature, index) => (
-            <div key={index} className="text-center p-8 rounded-2xl bg-white shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 cursor-pointer hover:bg-gradient-to-br hover:from-blue-50 hover:to-blue-100 group">
-              <div className="text-5xl font-bold text-blue-600 mb-4">{feature.percentage}</div>
-              <div className="text-5xl mb-6 group-hover:scale-125 transition-transform duration-300">{feature.icon}</div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">{feature.title}</h3>
-              <p className="text-gray-600">{feature.description}</p>
-            </div>
-          ))}
+        {/* Features Grid with Enhanced Animations */}
+        <div className={`grid md:grid-cols-3 gap-8 max-w-6xl mx-auto ${isVisible ? 'animate-fade-in-up-delay' : 'opacity-0'}`}>
+          {whyChooseUs.map((feature, index) => {
+            const IconComponent = feature.icon;
+            return (
+              <div
+                key={index}
+                className="feature-card group relative bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-4 hover:scale-105 cursor-pointer overflow-hidden border border-gray-100"
+                onMouseEnter={() => setHoveredIndex(index)}
+                onMouseLeave={() => setHoveredIndex(null)}
+                style={{
+                  animationDelay: `${index * 0.2}s`
+                }}
+              >
+                {/* Gradient Overlay */}
+                <div className="absolute inset-0 bg-blue-500/0 group-hover:bg-blue-500/5 transition-opacity duration-500 rounded-2xl"></div>
+                
+                {/* Image Background */}
+                <div className="relative h-56 overflow-hidden">
+                  <img
+                    src={feature.image}
+                    alt={feature.title}
+                    className={`w-full h-full object-cover transition-all duration-700 ${
+                      hoveredIndex === index ? 'scale-125 blur-sm' : 'scale-100 blur-0'
+                    }`}
+                  />
+                  <div className={`absolute inset-0 bg-gradient-to-t from-gray-900/80 via-gray-900/40 to-transparent transition-all duration-500 ${
+                    hoveredIndex === index ? `bg-gradient-to-t from-blue-900/60 via-blue-900/30 to-transparent` : ''
+                  }`}></div>
+                  
+                  {/* Icon Overlay with Animation */}
+                  <div className="absolute bottom-4 left-4">
+                    <div className={`w-14 h-14 bg-white/95 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-2xl transition-all duration-500 ${
+                      hoveredIndex === index ? 'bg-blue-600 scale-125 rotate-12' : 'bg-white/95 scale-100 rotate-0'
+                    }`}>
+                      <IconComponent className={`text-3xl transition-all duration-500 ${
+                        hoveredIndex === index ? 'text-white' : 'text-blue-600'
+                      }`} />
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Content */}
+                <div className="p-6 md:p-8">
+                  {/* Title */}
+                  <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors duration-300">
+                    {feature.title}
+                  </h3>
+                  
+                  {/* Description */}
+                  <p className="text-sm md:text-base text-gray-600 leading-relaxed mb-6 min-h-[48px]">
+                    {feature.description}
+                  </p>
+
+                  {/* Features List */}
+                  <div className="space-y-2">
+                    {feature.features.map((feat, featIndex) => (
+                      <div 
+                        key={featIndex}
+                        className={`flex items-center gap-2 text-sm text-gray-700 transform transition-all duration-300 ${
+                          hoveredIndex === index ? 'translate-x-2' : 'translate-x-0'
+                        }`}
+                        style={{ transitionDelay: `${featIndex * 0.1}s` }}
+                      >
+                        <div className={`w-1.5 h-1.5 rounded-full bg-blue-600 transition-all duration-300 ${
+                          hoveredIndex === index ? 'scale-150' : 'scale-100'
+                        }`}></div>
+                        <span>{feat}</span>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  {/* Bottom Accent Line */}
+                  <div className="absolute bottom-0 left-0 right-0 h-2 bg-blue-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left rounded-b-2xl"></div>
+                </div>
+
+                {/* Glow Effect */}
+                <div className="absolute inset-0 rounded-2xl bg-blue-500/0 group-hover:bg-blue-500/10 blur-2xl transition-opacity duration-500 -z-10"></div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>
