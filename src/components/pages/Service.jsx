@@ -67,7 +67,7 @@ function Service() {
       image: 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&q=80'
     },
     {
-      title: 'PDSA Solutions Training Hub',
+      title: 'PDSA Tech Training Hub',
       description: 'Comprehensive training programs and skill development courses to enhance your team\'s technical capabilities.',
       features: ['Technical Training', 'Certification Programs', 'Skill Development', 'Corporate Training'],
       link: '/services/training-hub',
