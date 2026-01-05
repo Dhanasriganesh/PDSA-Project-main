@@ -17,22 +17,29 @@ const createTransporter = () => {
 // Helper function to parse multipart form data
 function parseForm(req) {
   return new Promise((resolve, reject) => {
-    const uploadDir = os.tmpdir();
-    
-    const form = formidable({
-      uploadDir: uploadDir,
-      maxFileSize: 10 * 1024 * 1024, // 10MB
-      keepExtensions: true,
-      multiples: false,
-    });
+    try {
+      // In Vercel serverless, use /tmp directory
+      const uploadDir = '/tmp';
+      
+      const form = formidable({
+        uploadDir: uploadDir,
+        maxFileSize: 10 * 1024 * 1024, // 10MB
+        keepExtensions: true,
+        multiples: false,
+      });
 
-    form.parse(req, (err, fields, files) => {
-      if (err) {
-        reject(err);
-        return;
-      }
-      resolve({ fields, files });
-    });
+      form.parse(req, (err, fields, files) => {
+        if (err) {
+          console.error('Formidable parse error:', err);
+          reject(err);
+          return;
+        }
+        resolve({ fields, files });
+      });
+    } catch (error) {
+      console.error('Error in parseForm:', error);
+      reject(error);
+    }
   });
 }
 
@@ -199,8 +206,15 @@ module.exports = async (req, res) => {
   let fileAttachment = null;
 
   try {
+    // Log request info for debugging
+    console.log('Request method:', req.method);
+    console.log('Content-Type:', req.headers['content-type']);
+    
     // Parse multipart form data
     const { fields, files } = await parseForm(req);
+    
+    console.log('Parsed fields:', Object.keys(fields));
+    console.log('Parsed files:', files ? Object.keys(files) : 'none');
 
     // Extract form fields
     const name = Array.isArray(fields.name) ? fields.name[0] : fields.name;
@@ -301,7 +315,11 @@ module.exports = async (req, res) => {
     });
   } catch (error) {
     console.error('Error processing career application:', error);
-    console.error('Error stack:', error.stack);
+    console.error('Error name:', error.name);
+    console.error('Error message:', error.message);
+    if (error.stack) {
+      console.error('Error stack:', error.stack);
+    }
     
     // Clean up any uploaded files on error
     if (fileAttachment && fileAttachment.path && fs.existsSync(fileAttachment.path)) {
@@ -312,9 +330,14 @@ module.exports = async (req, res) => {
       }
     }
     
+    // Return a more detailed error in development, generic in production
+    const errorMessage = process.env.NODE_ENV === 'development' 
+      ? error.message || 'Failed to send application. Please try again later.'
+      : 'Failed to send application. Please try again later.';
+    
     return res.status(500).json({
       success: false,
-      error: error.message || 'Failed to send application. Please try again later.',
+      error: errorMessage,
     });
   }
 };
