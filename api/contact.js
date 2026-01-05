@@ -1,7 +1,7 @@
 const nodemailer = require('nodemailer');
-const formidable = require('formidable');
+const busboy = require('busboy');
 const fs = require('fs');
-const os = require('os');
+const path = require('path');
 
 // Create transporter
 const createTransporter = () => {
@@ -23,43 +23,68 @@ const topicLabels = {
   media: 'Media / partnerships',
 };
 
-// Helper function to parse multipart form data
+// Helper function to parse multipart form data using busboy
 function parseForm(req) {
   return new Promise((resolve, reject) => {
     try {
-      // In Vercel serverless, use /tmp directory
+      const fields = {};
+      const files = {};
+      let fileAttachment = null;
+
+      const bb = busboy({ headers: req.headers });
       const uploadDir = '/tmp';
-      
-      // Ensure directory exists (Vercel creates /tmp automatically, but just in case)
-      try {
-        if (!fs.existsSync(uploadDir)) {
-          fs.mkdirSync(uploadDir, { recursive: true });
+
+      bb.on('field', (name, value) => {
+        if (fields[name]) {
+          if (Array.isArray(fields[name])) {
+            fields[name].push(value);
+          } else {
+            fields[name] = [fields[name], value];
+          }
+        } else {
+          fields[name] = value;
         }
-      } catch (dirError) {
-        console.warn('Could not create upload directory, using default:', dirError.message);
-      }
-      
-      const form = formidable({
-        uploadDir: uploadDir,
-        maxFileSize: 10 * 1024 * 1024, // 10MB
-        keepExtensions: true,
-        multiples: false,
       });
 
-      // Handle errors during parsing
-      form.on('error', (err) => {
-        console.error('Formidable error event:', err);
+      bb.on('file', (name, file, info) => {
+        const { filename, encoding, mimeType } = info;
+        const filepath = path.join(uploadDir, `${Date.now()}-${filename}`);
+        const writeStream = fs.createWriteStream(filepath);
+
+        file.pipe(writeStream);
+
+        file.on('data', () => {
+          // Track file size
+        });
+
+        file.on('end', () => {
+          writeStream.end();
+        });
+
+        writeStream.on('close', () => {
+          files[name] = {
+            filename: filename,
+            filepath: filepath,
+            mimetype: mimeType,
+          };
+        });
+
+        writeStream.on('error', (err) => {
+          console.error('File write error:', err);
+          reject(err);
+        });
+      });
+
+      bb.on('finish', () => {
+        resolve({ fields, files });
+      });
+
+      bb.on('error', (err) => {
+        console.error('Busboy error:', err);
         reject(err);
       });
 
-      form.parse(req, (err, fields, files) => {
-        if (err) {
-          console.error('Formidable parse error:', err);
-          reject(err);
-          return;
-        }
-        resolve({ fields, files });
-      });
+      req.pipe(bb);
     } catch (error) {
       console.error('Error in parseForm:', error);
       reject(error);
@@ -258,10 +283,10 @@ module.exports = async (req, res) => {
 
     // Handle file attachment
     const file = files.file;
-    if (file && !Array.isArray(file)) {
+    if (file) {
       // Validate file type
       const allowedExtensions = ['.pdf', '.doc', '.docx', '.zip', '.ppt', '.pptx'];
-      const fileExtension = '.' + (file.originalFilename || '').split('.').pop().toLowerCase();
+      const fileExtension = '.' + (file.filename || '').split('.').pop().toLowerCase();
       
       if (!allowedExtensions.includes(fileExtension)) {
         // Clean up file if invalid
@@ -279,7 +304,7 @@ module.exports = async (req, res) => {
       }
 
       fileAttachment = {
-        filename: file.originalFilename || 'attachment',
+        filename: file.filename || 'attachment',
         path: file.filepath,
       };
     }

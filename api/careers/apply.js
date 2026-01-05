@@ -1,7 +1,7 @@
 const nodemailer = require('nodemailer');
-const formidable = require('formidable');
+const busboy = require('busboy');
 const fs = require('fs');
-const os = require('os');
+const path = require('path');
 
 // Create transporter
 const createTransporter = () => {
@@ -14,28 +14,63 @@ const createTransporter = () => {
   });
 };
 
-// Helper function to parse multipart form data
+// Helper function to parse multipart form data using busboy
 function parseForm(req) {
   return new Promise((resolve, reject) => {
     try {
-      // In Vercel serverless, use /tmp directory
+      const fields = {};
+      const files = {};
+
+      const bb = busboy({ headers: req.headers });
       const uploadDir = '/tmp';
-      
-      const form = formidable({
-        uploadDir: uploadDir,
-        maxFileSize: 10 * 1024 * 1024, // 10MB
-        keepExtensions: true,
-        multiples: false,
+
+      bb.on('field', (name, value) => {
+        if (fields[name]) {
+          if (Array.isArray(fields[name])) {
+            fields[name].push(value);
+          } else {
+            fields[name] = [fields[name], value];
+          }
+        } else {
+          fields[name] = value;
+        }
       });
 
-      form.parse(req, (err, fields, files) => {
-        if (err) {
-          console.error('Formidable parse error:', err);
+      bb.on('file', (name, file, info) => {
+        const { filename, encoding, mimeType } = info;
+        const filepath = path.join(uploadDir, `${Date.now()}-${filename}`);
+        const writeStream = fs.createWriteStream(filepath);
+
+        file.pipe(writeStream);
+
+        file.on('end', () => {
+          writeStream.end();
+        });
+
+        writeStream.on('close', () => {
+          files[name] = {
+            filename: filename,
+            filepath: filepath,
+            mimetype: mimeType,
+          };
+        });
+
+        writeStream.on('error', (err) => {
+          console.error('File write error:', err);
           reject(err);
-          return;
-        }
+        });
+      });
+
+      bb.on('finish', () => {
         resolve({ fields, files });
       });
+
+      bb.on('error', (err) => {
+        console.error('Busboy error:', err);
+        reject(err);
+      });
+
+      req.pipe(bb);
     } catch (error) {
       console.error('Error in parseForm:', error);
       reject(error);
@@ -242,10 +277,10 @@ module.exports = async (req, res) => {
 
     // Handle file attachment
     const file = files.file;
-    if (file && !Array.isArray(file)) {
+    if (file) {
       // Validate file type
       const allowedExtensions = ['.pdf', '.doc', '.docx', '.zip'];
-      const fileExtension = '.' + (file.originalFilename || '').split('.').pop().toLowerCase();
+      const fileExtension = '.' + (file.filename || '').split('.').pop().toLowerCase();
       
       if (!allowedExtensions.includes(fileExtension)) {
         // Clean up file if invalid
@@ -263,7 +298,7 @@ module.exports = async (req, res) => {
       }
 
       fileAttachment = {
-        filename: file.originalFilename || 'resume',
+        filename: file.filename || 'resume',
         path: file.filepath,
       };
     }
