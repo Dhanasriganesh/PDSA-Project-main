@@ -230,7 +230,7 @@ function Contact() {
                       value={formData.name}
                       onChange={handleChange}
                       className="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-all bg-gray-50 focus:bg-white text-xs sm:text-sm"
-                      placeholder="John Doe"
+                      placeholder=""
                     />
                   </div>
 
@@ -246,7 +246,7 @@ function Contact() {
                       value={formData.email}
                       onChange={handleChange}
                       className="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-all bg-gray-50 focus:bg-white text-xs sm:text-sm"
-                      placeholder="john@example.com"
+                      placeholder=""
                     />
                   </div>
                 </div>
@@ -264,7 +264,7 @@ function Contact() {
                       value={formData.mobile}
                       onChange={handleChange}
                       className="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-all bg-gray-50 focus:bg-white text-xs sm:text-sm"
-                      placeholder="+1 (555) 123-4567"
+                      placeholder=""
                     />
                   </div>
 
@@ -288,21 +288,16 @@ function Contact() {
                   <label htmlFor="topic" className="block text-gray-700 font-semibold mb-1 text-xs">
                     Topic <span className="text-red-500">*</span>
                   </label>
-                  <select
+                  <input
+                    type="text"
                     id="topic"
                     name="topic"
                     required
                     value={formData.topic}
                     onChange={handleChange}
                     className="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-all bg-gray-50 focus:bg-white text-xs sm:text-sm"
-                  >
-                    <option value="">Select a topic</option>
-                    <option value="strategy">Strategy / innovation</option>
-                    <option value="platforms">Platforms / engineering</option>
-                    <option value="ai">AI & automation</option>
-                    <option value="careers">Careers</option>
-                    <option value="media">Media / partnerships</option>
-                  </select>
+                    placeholder="Enter your topic"
+                  />
                 </div>
 
                 <div>

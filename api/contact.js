@@ -412,17 +412,16 @@ export default async (req, res) => {
       });
     }
 
-    // Validate topic
-    const validTopics = ['strategy', 'platforms', 'ai', 'careers', 'media'];
-    if (!validTopics.includes(topic)) {
+    // Validate topic is not empty (already validated above, but ensure it's a string)
+    if (!topic || typeof topic !== 'string' || topic.trim().length === 0) {
       return res.status(400).json({
         success: false,
-        error: 'Please select a valid topic.',
+        error: 'Please enter a topic.',
       });
     }
 
-    // Get topic label
-    const topicLabel = topicLabels[topic] || topic;
+    // Use topic directly (no need for label mapping since it's now a free text field)
+    const topicLabel = topic.trim();
 
     // Check if email service is configured
     const transporter = createTransporter();
