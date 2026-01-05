@@ -5,11 +5,19 @@ const path = require('path');
 
 // Create transporter
 const createTransporter = () => {
+  const gmailUser = process.env.GMAIL_USER || 'tejaannangi1996@gmail.com';
+  const gmailPass = process.env.GMAIL_APP_PASSWORD || 'zmnxembklkfmwrox';
+  
+  if (!gmailUser || !gmailPass) {
+    console.warn('Gmail credentials not configured');
+    return null;
+  }
+  
   return nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'tejaannangi1996@gmail.com',
-      pass: 'zmnxembklkfmwrox', // App password
+      user: gmailUser,
+      pass: gmailPass,
     },
   });
 };
