@@ -30,11 +30,26 @@ function parseForm(req) {
       // In Vercel serverless, use /tmp directory
       const uploadDir = '/tmp';
       
+      // Ensure directory exists (Vercel creates /tmp automatically, but just in case)
+      try {
+        if (!fs.existsSync(uploadDir)) {
+          fs.mkdirSync(uploadDir, { recursive: true });
+        }
+      } catch (dirError) {
+        console.warn('Could not create upload directory, using default:', dirError.message);
+      }
+      
       const form = formidable({
         uploadDir: uploadDir,
         maxFileSize: 10 * 1024 * 1024, // 10MB
         keepExtensions: true,
         multiples: false,
+      });
+
+      // Handle errors during parsing
+      form.on('error', (err) => {
+        console.error('Formidable error event:', err);
+        reject(err);
       });
 
       form.parse(req, (err, fields, files) => {
