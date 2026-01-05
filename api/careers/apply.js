@@ -25,62 +25,145 @@ const createTransporter = () => {
 // Helper function to parse multipart form data using busboy
 function parseForm(req) {
   return new Promise((resolve, reject) => {
-    try {
-      const fields = {};
-      const files = {};
+    const fields = {};
+    const files = {};
+    let fileCount = 0;
+    let finishedFiles = 0;
+    let hasError = false;
 
-      const bb = busboy({ headers: req.headers });
+    try {
+      // Check if request is readable
+      if (!req || typeof req.pipe !== 'function') {
+        return reject(new Error('Request is not a readable stream'));
+      }
+
+      // Ensure upload directory exists
       const uploadDir = '/tmp';
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+      }
+
+      const bb = busboy({ 
+        headers: req.headers,
+        limits: {
+          fileSize: 10 * 1024 * 1024, // 10MB limit
+        }
+      });
 
       bb.on('field', (name, value) => {
-        if (fields[name]) {
-          if (Array.isArray(fields[name])) {
-            fields[name].push(value);
+        if (hasError) return;
+        try {
+          if (fields[name]) {
+            if (Array.isArray(fields[name])) {
+              fields[name].push(value);
+            } else {
+              fields[name] = [fields[name], value];
+            }
           } else {
-            fields[name] = [fields[name], value];
+            fields[name] = value;
           }
-        } else {
-          fields[name] = value;
+        } catch (err) {
+          console.error('Error processing field:', err);
         }
       });
 
       bb.on('file', (name, file, info) => {
-        const { filename, encoding, mimeType } = info;
-        const filepath = path.join(uploadDir, `${Date.now()}-${filename}`);
-        const writeStream = fs.createWriteStream(filepath);
+        if (hasError) {
+          file.resume(); // Drain the file stream
+          return;
+        }
 
-        file.pipe(writeStream);
+        try {
+          fileCount++;
+          const { filename, encoding, mimeType } = info;
+          const safeFilename = filename || 'file';
+          const filepath = path.join(uploadDir, `${Date.now()}-${Math.random().toString(36).substring(7)}-${safeFilename}`);
+          const writeStream = fs.createWriteStream(filepath);
 
-        file.on('end', () => {
-          writeStream.end();
-        });
+          file.pipe(writeStream);
 
-        writeStream.on('close', () => {
-          files[name] = {
-            filename: filename,
-            filepath: filepath,
-            mimetype: mimeType,
-          };
-        });
+          writeStream.on('close', () => {
+            finishedFiles++;
+            files[name] = {
+              filename: safeFilename,
+              filepath: filepath,
+              mimetype: mimeType,
+            };
+            
+            // Check if all files are done
+            if (finishedFiles === fileCount && !hasError) {
+              // This will be handled by the 'finish' event
+            }
+          });
 
-        writeStream.on('error', (err) => {
-          console.error('File write error:', err);
+          writeStream.on('error', (err) => {
+            console.error('File write error:', err);
+            hasError = true;
+            file.resume(); // Drain the file stream
+            if (fs.existsSync(filepath)) {
+              try {
+                fs.unlinkSync(filepath);
+              } catch (e) {
+                console.error('Error deleting file on write error:', e);
+              }
+            }
+            reject(err);
+          });
+
+          file.on('error', (err) => {
+            console.error('File stream error:', err);
+            hasError = true;
+            if (fs.existsSync(filepath)) {
+              try {
+                fs.unlinkSync(filepath);
+              } catch (e) {
+                console.error('Error deleting file on stream error:', e);
+              }
+            }
+            reject(err);
+          });
+        } catch (err) {
+          console.error('Error setting up file handler:', err);
+          hasError = true;
+          file.resume(); // Drain the file stream
           reject(err);
-        });
+        }
       });
 
       bb.on('finish', () => {
-        resolve({ fields, files });
+        if (!hasError) {
+          resolve({ fields, files });
+        }
       });
 
       bb.on('error', (err) => {
         console.error('Busboy error:', err);
+        hasError = true;
         reject(err);
       });
 
+      // Set a timeout to prevent hanging
+      const timeout = setTimeout(() => {
+        if (!hasError) {
+          hasError = true;
+          reject(new Error('Request timeout: Form parsing took too long'));
+        }
+      }, 25000); // 25 seconds
+
+      // Pipe request to busboy
       req.pipe(bb);
+
+      // Clear timeout on finish
+      bb.once('finish', () => {
+        clearTimeout(timeout);
+      });
+
+      bb.once('error', () => {
+        clearTimeout(timeout);
+      });
     } catch (error) {
-      console.error('Error in parseForm:', error);
+      console.error('Error in parseForm setup:', error);
+      hasError = true;
       reject(error);
     }
   });
@@ -315,9 +398,11 @@ module.exports = async (req, res) => {
     const transporter = createTransporter();
     if (transporter) {
       try {
+        const gmailUser = process.env.GMAIL_USER || 'tejaannangi1996@gmail.com';
+        const mailTo = process.env.MAIL_TO || 'groupartihcus@gmail.com';
         const mailOptions = {
-          from: '"PDSA Technology Careers" <tejaannangi1996@gmail.com>',
-          to: 'groupartihcus@gmail.com',
+          from: `"PDSA Technology Careers" <${gmailUser}>`,
+          to: mailTo,
           subject: `New Career Application: ${role} - ${name}`,
           html: createCareerEmailTemplate({
             name,
