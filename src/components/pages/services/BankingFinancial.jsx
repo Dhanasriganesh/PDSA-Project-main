@@ -135,12 +135,7 @@ function BankingFinancial() {
               Contact us today to learn how our solutions can modernize your financial services
             </p>
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
-              <Link
-                to="/contact"
-                className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white px-6 sm:px-8 py-3 sm:py-3.5 md:py-4 rounded-full hover:from-blue-700 hover:to-indigo-800 transition-all duration-300 font-semibold text-sm sm:text-base md:text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-              >
-                Get Quote
-              </Link>
+            
               <Link
                 to="/services"
                 className="border-2 border-white text-white px-6 sm:px-8 py-3 sm:py-3.5 md:py-4 rounded-full hover:bg-white hover:text-blue-900 transition-all duration-300 font-semibold text-sm sm:text-base md:text-lg"
