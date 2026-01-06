@@ -429,7 +429,7 @@ export default async (req, res) => {
       try {
         // Prepare email content
         const gmailUser = process.env.GMAIL_USER || 'tejaannangi1996@gmail.com';
-        const mailTo = process.env.MAIL_TO || 'groupartihcus@gmail.com';
+        const mailTo = process.env.MAIL_TO || 'contact@pdsatech.com';
         const mailOptions = {
           from: `"PDSA Technology Contact" <${gmailUser}>`,
           to: mailTo,

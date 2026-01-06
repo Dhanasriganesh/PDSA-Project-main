@@ -399,7 +399,7 @@ export default async (req, res) => {
     if (transporter) {
       try {
         const gmailUser = process.env.GMAIL_USER || 'tejaannangi1996@gmail.com';
-        const mailTo = process.env.MAIL_TO || 'groupartihcus@gmail.com';
+        const mailTo = process.env.MAIL_TO || 'contact@pdsatech.com';
         const mailOptions = {
           from: `"PDSA Technology Careers" <${gmailUser}>`,
           to: mailTo,
